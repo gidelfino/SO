@@ -27,6 +27,8 @@
 *.i*86
 *.x86_64
 *.hex
+ep1
+ep1sh
 
 # Debug files
 *.dSYM/
