@@ -10,6 +10,7 @@ struct process
 	char *name; 	/* Nome identificador do processo */
 	double dt;   	/* Tempo (da CPU) que deve ser simulado */
 	double dl;   	/* (Deadline) Intante limite de termino */
+	double pt;      /* Instante em que o processo comeca a ser processado */
 
 	int id;		 	/* Posicao do processo por ordem de chegada */
 	int tl;			/* Linha do processo no arquivo de trace */
