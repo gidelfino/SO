@@ -5,7 +5,7 @@
 #include <pthread.h>
 #include <time.h>
 
-#include "utility.h"
+#include "ep1.h"
 
 int main(int argc, char *argv[]) 
 {

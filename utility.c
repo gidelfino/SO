@@ -5,7 +5,7 @@
 #include <pthread.h>
 #include <time.h>
 
-#include "utility.h"
+#include "ep1.h"
 
 int dflag;
 int sched;
@@ -63,4 +63,22 @@ void writeFile(char *fname, int n, Process procs[], int ctxch)
 	}
 
 	fclose(file);
+}
+
+/* Funcao que tranca o mutex da thread com identificador id */
+void mutexLock(int id)
+{
+	if (pthread_mutex_lock(&procs[id].mutex) != 0) {
+		perror("pthread_mutex_lock()");
+		exit(EXIT_FAILURE);
+	}
+}
+
+/* Funcao que destranca o mutex da thread com identificador id */
+void mutexUnlock(int id)
+{
+	if (pthread_mutex_unlock(&procs[id].mutex) != 0) {
+		perror("pthread_mutex_unlock()");
+		exit(EXIT_FAILURE);
+	}
 }
