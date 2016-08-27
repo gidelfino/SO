@@ -4,7 +4,7 @@
 #include "heap_max.h"
 
 static int HEAPcomp(int a, int b, Process *procs, double ct, int debug) {
-    double ra, rb; //Tempo restante atual dos processos a e b
+    double ra, rb; /* Tempo restante atual dos processos a e b */
     ra = procs[a].dt - (ct - procs[a].pt); 
     rb = procs[b].dt - (ct - procs[b].pt);
     if (debug) printf("(%f) %s resta %f e %s resta %f\n", ct, procs[a].name, ra, procs[b].name, rb);
@@ -23,13 +23,14 @@ HeapMax HEAPinit(int N) {
 }
 
 static void swap(int *a, int *b) {
-    int x = *a;
+    int x;
+    x = *a;
     *a = *b;
     *b = x;
 }
 
-static HEAPupdate(int *heap, Process procs[], int *msk, double ct, int no) {
-    int pai, x;
+static void HEAPupdate(int *heap, Process procs[], int *msk, double ct, int no) {
+    int pai;
     if (no == 1) return;
     pai = no / 2;
     if (HEAPcomp(heap[pai], heap[no], procs, ct, 0)) {
@@ -42,11 +43,11 @@ static HEAPupdate(int *heap, Process procs[], int *msk, double ct, int no) {
 void HEAPinsert(HeapMax H, Process procs[], double ct, int id) {
     (H->sz)++;
     H->heap[H->sz] = id; H->msk[id] = H->sz;
-    procs[id].pt = ct; //Processo id comecou a ser processado em ct
+    procs[id].pt = ct; /* Processo id comecou a ser processado em ct */
     HEAPupdate(H->heap, procs, H->msk, ct, H->sz);
 }
 
-static  void HEAPset(int heap[], Process procs[], int *msk, double ct, int no, int sz) {
+static void HEAPset(int heap[], Process procs[], int *msk, double ct, int no, int sz) {
     int son1, son2;
     if (no * 2 > sz) return;
     son1 = no * 2; son2 = no * 2 + 1;
@@ -64,13 +65,14 @@ static  void HEAPset(int heap[], Process procs[], int *msk, double ct, int no, i
 }
 
 int HEAPpop(HeapMax H, Process procs[], double ct) {
+    int ret;
     if (H->sz == 0) return -1;
-    int ret = H->heap[1];
+    ret = H->heap[1];
     H->heap[1] = H->heap[H->sz];
     H->heap[H->sz] = CORNER; (H->sz)--; 
     HEAPset(H->heap, procs, H->msk, ct, 1, H->sz);
     H->msk[ret] = -1;
-    procs[ret].rt -= (ct - procs[ret].pt); //Atualiza o novo tempo restante
+    procs[ret].rt -= (ct - procs[ret].pt); /* Atualiza o novo tempo restante */
     return ret;
 }
 
