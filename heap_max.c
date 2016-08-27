@@ -3,8 +3,7 @@
 #include "utility.h"
 #include "heap_max.h"
 
-static int HEAPcomp(int a, int b, Process *procs, double ct, int debug)
-{
+static int HEAPcomp(int a, int b, Process *procs, double ct, int debug) {
     double ra, rb; //Tempo restante atual dos processos a e b
     ra = procs[a].dt - (ct - procs[a].pt); 
     rb = procs[b].dt - (ct - procs[b].pt);
@@ -13,8 +12,7 @@ static int HEAPcomp(int a, int b, Process *procs, double ct, int debug)
     return 0;
 }
 
-HeapMax HEAPinit(int N)
-{
+HeapMax HEAPinit(int N) {
     HeapMax H; int i;
     H = malloc(sizeof *H);
     H->heap = malloc(2 * N * sizeof(int));

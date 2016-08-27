@@ -3,9 +3,9 @@
 #define CORNER -10e8
 
 struct heap_min {
-	int sz;   //Tamanho da heap
-	int *msk; //msk[id] = i me dá onde está o processo id dentro da heap (heap[i] = id)
-	int *heap;//Vetor heap
+	int sz;   /* Tamanho da heap */
+	int *msk; /* msk[id] = i me dá onde está o processo id dentro da heap (heap[i] = id) */
+	int *heap;/* Vetor heap */
 };
 
 typedef struct heap_min *HeapMin;
