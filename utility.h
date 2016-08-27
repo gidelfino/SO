@@ -1,11 +1,11 @@
 #ifndef utility_H_
 #define utility_H_
 
-#define MAX_SIZE     1025
-<<<<<<< HEAD
+#include <pthread.h>
+#include <time.h>
 
-=======
->>>>>>> 49bb636d8df4c55781ee217aa56ac47ddae9bc2b
+#define MAX_SIZE     1025
+
 
 /* Struct de um processo */
 struct process 

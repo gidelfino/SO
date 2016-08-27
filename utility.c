@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>	
-#include <pthread.h>
-#include <time.h>
 
 #include "utility.h"
 
@@ -39,7 +37,7 @@ void readFile(char *fname, int *n, Process procs[])
 			strcpy(procs[*n].name, strtok(NULL, " "));
 			sscanf(strtok(NULL, " "), "%lf", &procs[*n].dt);
 			sscanf(strtok(NULL, " "), "%lf", &procs[*n].dl);
-			procs[*n].rt = procs[*n].dt; //No inicio o rt e dt sao iguais
+			procs[*n].rt = procs[*n].dt;
 			procs[*n].tl = *n + 1;
 			*n = *n + 1;
 		}
@@ -94,7 +92,7 @@ void mutexUnlock(int id)
 
 /* Funcao que realiza uma operacao que consome tempo 
 real da CPU para o processo de identificador tid */
-void *timeOperation(void *tid)
+/*void *timeOperation(void *tid)
 {
 	double time, elapsed;
 	clock_t start, end;
@@ -138,3 +136,4 @@ void *timeOperation(void *tid)
 	
 	return NULL;
 }
+*/

@@ -2,9 +2,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <pthread.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
+
 
 #define MAX_SIZE 	1024
 
@@ -15,6 +18,8 @@ int main()
 	char *input, *token, *comnd;
     char *param[MAX_SIZE];
 	pid_t pid;
+
+	input = NULL;
 
 	/* Inicio do shell */
     while (42) {
@@ -55,20 +60,20 @@ int main()
  		/* /bin/ls -1    /bin/date    ./ep1 <argumentos do EP1> */
  		else                      
  			switch (pid = fork()) {
-				case -1: // Erro
+				case -1: /* Erro */
 					perror("fork()");
 					exit(EXIT_FAILURE);
-				case 0:  // Processo filho
+				case 0:  /* Processo filho */
 					status = execve(comnd, param, 0);
 					exit(status);
-				default: // Processo pai 
+				default: /* Processo pai */
 					if ((waitpid(pid, &status, 0)) < 0) {
 						perror("waitpid()");
 						exit(EXIT_FAILURE);
 					}
 			}
-			
-		free(input);
+		
+		if (input != NULL) free(input);
 	}
 	return 0;
 }
