@@ -33,3 +33,5 @@ ep1sh
 # Debug files
 *.dSYM/
 *.su
+
+*.DS_Store

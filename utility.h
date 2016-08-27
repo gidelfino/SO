@@ -2,7 +2,10 @@
 #define utility_H_
 
 #define MAX_SIZE     1025
+<<<<<<< HEAD
 
+=======
+>>>>>>> 49bb636d8df4c55781ee217aa56ac47ddae9bc2b
 
 /* Struct de um processo */
 struct process 

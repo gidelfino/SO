@@ -32,6 +32,7 @@ void readFile(char *fname, int *n, Process procs[])
 			strcpy(procs[*n].name, strtok(NULL, " "));
 			sscanf(strtok(NULL, " "), "%lf", &procs[*n].dt);
 			sscanf(strtok(NULL, " "), "%lf", &procs[*n].dl);
+			procs[*n].rt = procs[*n].dt; //No inicio o rt e dt sao iguais
 			procs[*n].tl = *n + 1;
 			*n = *n + 1;
 		}
