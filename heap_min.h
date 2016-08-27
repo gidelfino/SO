@@ -8,23 +8,23 @@ struct heap_min {
 	int *heap;/* Vetor heap */
 };
 
-typedef struct heap_min *HeapMin;
+typedef struct heap_min *MinHeap;
 
 /* Função recebe o número de processadores N e retorna um vetor heap
    já malocado */
-HeapMin HEAPMNinit(int N);
+MinHeap MINHEAPinit(int N);
 
 /* A função insere o processo id na heap usando comparando
    com seu tempo restante rt */
-void HEAPMNinsert(HeapMin H, Process procs[], int id) ;
+void MINHEAPinsert(MinHeap H, Process procs[], int id) ;
 
 /* A funcao retorna o id do processo com menor tempo restante
    que está sendo processado e o remove da heap */
-int HEAPMNpop(HeapMin H, Process procs[]);
+int MINHEAPpop(MinHeap H, Process procs[]);
 
 /* A funcao retorna o id do processo com menor tempo restante
    mas não o remove da heap (usar esse para consutas) */
-int HEAPMNtop(HeapMin H);
+int MINHEAPtop(MinHeap H);
 
 /* A funcao remove da heap o processo id */
-void HEAPMNremove(HeapMin H, Process procs[], int id);
+void MINHEAPremove(MinHeap H, Process procs[], int id);
