@@ -19,12 +19,6 @@ HeapMin HEAPinit(int N) {
     return H;
 }
 
-static void swap(int *a, int *b) {
-    int x = *a;
-    *a = *b;
-    *b = x;
-}
-
 static HEAPupdate(int *heap, Process procs[], int *msk, int no) {
     int pai, x;
     if (no == 1) return;

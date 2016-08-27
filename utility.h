@@ -39,6 +39,7 @@ extern Process procs[MAX_SIZE]; /* Vetor de processos */
 
 
 /* Funções de utility.c, que contem as funcoes de aspecto utilitario */
+void swap(int *a, int *b);
 void readFile(char *fname, int *n, Process procs[]);
 void writeFile(char *fname, int n, Process procs[], int ctxch);
 void mutexLock(int id);
