@@ -3,6 +3,7 @@
 
 #define MAX_SIZE     1025
 
+
 /* Struct de um processo */
 struct process 
 {
@@ -13,6 +14,7 @@ struct process
 
     int id;         /* Posicao do processo por ordem de chegada */
     int tl;         /* Linha do processo no arquivo de trace */
+    double pt;      /* Instante que a thread comeca a ser processada */
     double rt;      /* Tempo restante de execucao */
     double tf;      /* Instante de termino */
 
@@ -21,6 +23,7 @@ struct process
 };
 typedef struct process Process;
 
+
 /* Variaveis globais */
 extern int dflag;   /* Parametro d opcional */
 extern int sched;   /* Escalonador escolhido */
@@ -28,7 +31,9 @@ extern int pnext;   /* Proximo processo a ser executado */
 extern int pnumb;   /* Numero de processadores na maquina */
 extern int tnumb;   /* Numero de threads executando no momento */
 
+extern clock_t gstart;          /* Instante de inicio do programa */
 extern Process procs[MAX_SIZE]; /* Vetor de processos */
+
 
 /* Funções de utility.c, que contem as funcoes de aspecto utilitario */
 void readFile(char *fname, int *n, Process procs[]);

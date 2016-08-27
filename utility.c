@@ -5,7 +5,8 @@
 #include <pthread.h>
 #include <time.h>
 
-#include "ep1.h"
+#include "utility.h"
+
 
 int dflag;
 int sched;
