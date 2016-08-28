@@ -6,13 +6,14 @@
 #include <time.h>
 
 #include "utility.h"
+#include "scheduler.h"
 
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
 	int i, n;
 
 	n = dflag = pnext = 0;
-	pnumb = sysconf(_SC_NPROCESSORS_ONLN);
+	pnumb = 1;/*sysconf(_SC_NPROCESSORS_ONLN);*/
 
 	/* argv[]:	
 	1- No. escalonador	3- Arquivo saida
@@ -20,14 +21,15 @@ int main(int argc, char *argv[])
  	if (argc >= 4) { 
   		if (argc == 5)
   			if (strcmp(argv[4], "d") == 0)
-  				dflag = 1;
+  				dflag = TRUE;
 
   		readFile(argv[2], &n, procs);
   		/* ORDENAR OS PROCESSOS POR ORDEM DE CHEGADA */
 
 		for (i = 0; i < n; i++) { 
-			procs[i].id = i;	
+			procs[i].id = i;
 			procs[i].rt = procs[i].dt;
+			procs[i].paused = FALSE;
 		}
 
 		/* Execucao do escalonador escolhido */
@@ -35,6 +37,7 @@ int main(int argc, char *argv[])
 		switch (sched) {
 			case 1: /* First-Come First-Served */
 				printf("First-Come First-Served\n");
+				firstCome(n);
 				break;
 			case 2: /* Shortest Remaining Time Next */
 				printf("Shortest Remaining Time Next\n");
@@ -47,6 +50,11 @@ int main(int argc, char *argv[])
 				exit(EXIT_FAILURE);
 		}
 
+		for (i = 0; i < n; i++)
+			if (pthread_join(procs[i].thread, NULL)) {
+				printf("Erro ao esperar uma thread finalizar.\n"); 
+				exit(EXIT_FAILURE);
+			}
 		writeFile(argv[3], n, procs, 0); /* NAO ESQUECER DE ALTERAR O ULTIMO PARAMETRO (ctxch) */
 
 	}

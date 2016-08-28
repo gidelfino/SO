@@ -4,20 +4,37 @@
 #include <string.h>	
 
 #include "utility.h"
+#include "scheduler.h"
 
 int dflag;
 int sched;
 int pnext;
 int pnumb;
 int tnumb;
+
+int allbusy;
+
 clock_t gstart;
+pthread_mutex_t gmutex;
 Process procs[MAX_SIZE];
+
 
 void swap(int *a, int *b)
 {
     int aux = *a;
     *a = *b;
     *b = aux;
+}
+
+void nextProcess() {
+	switch (sched) {
+		case 1:	/* First-Come First-Served */
+			pnext = pnext + 1;
+			break;
+		default:
+			printf("Erro na seleção do próximo processo.\n");
+			exit(EXIT_FAILURE);
+	}
 }
 
 void readFile(char *fname, int *n, Process procs[]) 
@@ -64,66 +81,52 @@ void writeFile(char *fname, int n, Process procs[], int ctxch)
 	fclose(file);
 }
 
-void mutexLock(int id)
+void mutexLock(pthread_mutex_t mutex)
 {
-	if (pthread_mutex_lock(&procs[id].mutex) != 0) {
+	if (pthread_mutex_lock(&mutex) != 0) {
 		perror("pthread_mutex_lock()");
 		exit(EXIT_FAILURE);
 	}
 }
 
-void mutexUnlock(int id)
-{
-	if (pthread_mutex_unlock(&procs[id].mutex) != 0) {
+void mutexUnlock(pthread_mutex_t mutex)
+{	
+	if (pthread_mutex_unlock(&mutex) != 0) {
 		perror("pthread_mutex_unlock()");
 		exit(EXIT_FAILURE);
 	}
 }
 
-/* Funcao que realiza uma operacao que consome tempo 
-real da CPU para o processo de identificador tid */
-/*void *timeOperation(void *tid)
+void threadPause(int id)
 {
-	double time, elapsed;
-	clock_t start, end;
-	int id = *((int *) tid);
-	
-	time = procs[id].dt;
-
-	if (tnumb < pnumb) 
-		ThreadResume(id);
-	ThreadStatus(id);
-	
-	mutexLock(id); 
-	nthreads++; 
-	if (option == 2) 
-		remove_heap(id);
-	mutexUnlock(id);
-
-	start = clock();
-	while (1) {
-		ThreadStatus(id);
-		end = clock();
-		elapsed = ((double)end - (double)start) / CLOCKS_PER_SEC;
-		start = end;
-		procs[id].rtime -= elapsed;
-		if (procs[id].rtime <= 0.0) { 
-			procs[id].timef = ((double)end - (double)gstart) / CLOCKS_PER_SEC;
-			break; 
-		}
-
-	}		
-
-	mutexLock(id); 
-	nthreads--; 
-	mutexUnlock(id);
-	
-	calcNext();
-	if (next != -1) 
-		ThreadResume(next);
-	if (dflag == 1)
-		printf("Processo da linha [%d] finalizado, escrito na linha [%d].\n", procs[id].traceline, id + 1);
-	
-	return NULL;
+	mutexLock(gmutex);
+	procs[id].paused = TRUE;
+	mutexUnlock(gmutex);
 }
+
+void threadResume(int id)
+{
+	mutexLock(gmutex);
+	procs[id].paused = FALSE;
+	pthread_cond_broadcast(&procs[id].cond);
+	mutexUnlock(gmutex);
+}
+
+void threadStatus(int id)
+{
+	mutexLock(gmutex);	
+	while (procs[id].paused)  
+		pthread_cond_wait(&procs[id].cond, &gmutex);
+	mutexUnlock(gmutex);
+
+}
+
+/*
+if (id == 1) {
+		if (pthread_mutex_trylock(&gmutex) == 0) {
+			printf("mutex sucedido\n");
+			pthread_mutex_unlock(&gmutex);
+		}
+		else printf("thread %d nao controla mutex\n", id);
+	}
 */
