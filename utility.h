@@ -38,11 +38,23 @@ extern clock_t gstart;          /* Instante de inicio do programa */
 extern Process procs[MAX_SIZE]; /* Vetor de processos */
 
 
-/* Funções de utility.c, que contem as funcoes de aspecto utilitario */
+/* Funcao que troca os valores de duas variaveis */
 void swap(int *a, int *b);
+
+/* Funcao de leitura do arquivo de trace, onde: 
+fname o nome do arquivo de trace, n o contador de numero de processos
+e procs o  vetor de processos */
 void readFile(char *fname, int *n, Process procs[]);
+
+/* Funcao de escrita do arquivo de saida, onde:
+fname e o nome do arquivo de saida, n o numero de processos simulados,
+procs o vetor de processos e ctxch o numero de mudancas de contexto */
 void writeFile(char *fname, int n, Process procs[], int ctxch);
+
+/* Funcao que tranca o mutex da thread com identificador id */
 void mutexLock(int id);
+
+/* Funcao que destranca o mutex da thread com identificador id */
 void mutexUnlock(int id);
 
 

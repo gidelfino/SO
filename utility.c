@@ -13,18 +13,13 @@ int tnumb;
 clock_t gstart;
 Process procs[MAX_SIZE];
 
-
-/* Funcao que troca os valores de duas variaveis */
 void swap(int *a, int *b)
 {
-    int x = *a;
+    int aux = *a;
     *a = *b;
-    *b = x;
+    *b = aux;
 }
 
-/* Funcao de leitura do arquivo de trace, onde: 
-fname o nome do arquivo de trace, n o contador de numero de processos
-e procs o  vetor de processos */
 void readFile(char *fname, int *n, Process procs[]) 
 {
 	char input[MAX_SIZE];
@@ -49,9 +44,6 @@ void readFile(char *fname, int *n, Process procs[])
 	fclose(file);
 }
 
-/* Funcao de escrita do arquivo de saida, onde:
-fname e o nome do arquivo de saida, n o numero de processos simulados,
-procs o vetor de processos e ctxch o numero de mudancas de contexto */
 void writeFile(char *fname, int n, Process procs[], int ctxch)
 {
 	int i;
@@ -72,7 +64,6 @@ void writeFile(char *fname, int n, Process procs[], int ctxch)
 	fclose(file);
 }
 
-/* Funcao que tranca o mutex da thread com identificador id */
 void mutexLock(int id)
 {
 	if (pthread_mutex_lock(&procs[id].mutex) != 0) {
@@ -81,7 +72,6 @@ void mutexLock(int id)
 	}
 }
 
-/* Funcao que destranca o mutex da thread com identificador id */
 void mutexUnlock(int id)
 {
 	if (pthread_mutex_unlock(&procs[id].mutex) != 0) {

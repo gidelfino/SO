@@ -1,33 +1,38 @@
+#ifndef maxheap_H_
+#define maxheap_H_
+
 #include "utility.h"
 
 #define CORNER -10e8
 
-struct heap_max {
-	int sz;   /* Tamanho da heap */
-	int *msk; /* msk[id] = i me dá onde está o processo id dentro da heap (heap[i] = id) */
-	int *heap;/* Vetor heap */
-};
 
+/* Struct de uma heap de maximo */
+struct heap_max {
+	int size;   /* Tamanho da heap */
+	int *msk; 	/* msk[id] = i me dá onde está o processo id dentro da heap (heap[i] = id) */
+	int *heap;	/* Vetor heap */
+};
 typedef struct heap_max *MaxHeap;
 
-/* Função recebe o número de processadores N e retorna um vetor heap
-   já malocado */
+/* Funcao que recebe o numero N de processadores e retorna 
+um vetor heap ja alocado */
 MaxHeap MAXHEAPinit(int N);
 
-/* A função insere o processo id na heap usando que ele 
-   começou a ser processado em ct */
+/* Funcao que insere o processo id na heap sendo ct o tempo que ele 
+comecou a ser processado */
 void MAXHEAPinsert(MaxHeap H, Process procs[], double ct, int id) ;
 
-/* A funcao retorna o id do processo com maior tempo restante
-   que está sendo processado e o remove da heap 
-   (ct é o tempo atual) */
+/* Funcao que retorna o id do processo com maior tempo restante
+que esta sendo processado e o remove da heap (ct e o tempo atual) */
 int MAXHEAPpop(MaxHeap H, Process procs[], double ct);
 
-/* A funcao retorna o id do processo com maior tempo restante
-   mas não o remove da heap (usar esse para consutas) */
+/* Funcao que retorna o id do processo com maior tempo restante
+mas nao o remove da heap (utilizado para consutas) */
 int MAXHEAPtop(MaxHeap H);
 
-/* A funcao remove da heap o processo id */
+/* Funcao que remove da heap o processo com identificador id */
 void MAXHEAPremove(MaxHeap H, Process procs[], double ct, int id);
 
 /* ct É SEMPRE O TEMPO ATUAL */
+
+#endif

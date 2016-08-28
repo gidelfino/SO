@@ -15,7 +15,7 @@ MinHeap MINHEAPinit(int N) {
     H->heap = malloc(2 * N * sizeof(int));
     H->msk = malloc((N + 2) * sizeof(int));
     for (i = 0; i <= N; i++) H->msk[i] = -1;
-    H->sz = 0;
+    H->size = 0;
     return H;
 }
 
@@ -31,41 +31,41 @@ static void MINHEAPupdate(int *heap, Process procs[], int *msk, int no) {
 }
 
 void MINHEAPinsert(MinHeap H, Process procs[], int id) {
-    (H->sz)++;
-    H->heap[H->sz] = id; H->msk[id] = H->sz;
-    MINHEAPupdate(H->heap, procs, H->msk, H->sz);
+    (H->size)++;
+    H->heap[H->size] = id; H->msk[id] = H->size;
+    MINHEAPupdate(H->heap, procs, H->msk, H->size);
 }
 
-static void MINHEAPset(int heap[], Process procs[], int *msk, int no, int sz) {
+static void MINHEAPset(int heap[], Process procs[], int *msk, int no, int size) {
     int son1, son2;
-    if (no * 2 > sz) return;
+    if (no * 2 > size) return;
     son1 = no * 2; son2 = no * 2 + 1;
-    if (son1 == sz) son2 = -1;
+    if (son1 == size) son2 = -1;
     if (son2 != -1 && MINHEAPcomp(heap[son1], heap[son2], procs, 0) && MINHEAPcomp(heap[no], heap[son2], procs,0)) {
         msk[heap[no]] = son2; msk[heap[son2]] = no;
         swap(&heap[no], &heap[son2]);
-        MINHEAPset(heap, procs, msk, son2, sz);
+        MINHEAPset(heap, procs, msk, son2, size);
     }
     else if (MINHEAPcomp(heap[no], heap[son1], procs, 0)) {
         msk[heap[no]] = son1; msk[heap[son1]] = no;
         swap(&heap[no], &heap[son1]);
-        MINHEAPset(heap, procs, msk, son1, sz);
+        MINHEAPset(heap, procs, msk, son1, size);
     }
 }
 
 int MINHEAPpop(MinHeap H, Process procs[]) {
     int ret;
-    if (H->sz == 0) return -1;
+    if (H->size == 0) return -1;
     ret = H->heap[1];
-    H->heap[1] = H->heap[H->sz];
-    H->heap[H->sz] = -CORNER; (H->sz)--; 
-    MINHEAPset(H->heap, procs, H->msk, 1, H->sz);
+    H->heap[1] = H->heap[H->size];
+    H->heap[H->size] = -CORNER; (H->size)--; 
+    MINHEAPset(H->heap, procs, H->msk, 1, H->size);
     H->msk[ret] = -1;
     return ret;
 }
 
 int MINHEAPtop(MinHeap H) {
-    if (H->sz == 0) return -1;
+    if (H->size == 0) return -1;
     return H->heap[1];
 }
 
