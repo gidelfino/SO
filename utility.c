@@ -12,8 +12,6 @@ int pnext;
 int pnumb;
 int tnumb;
 
-int allbusy;
-
 clock_t gstart;
 pthread_mutex_t gmutex;
 Process procs[MAX_SIZE];
@@ -81,6 +79,7 @@ void writeFile(char *fname, int n, Process procs[], int ctxch)
 	fclose(file);
 }
 
+/*
 void mutexLock(pthread_mutex_t mutex)
 {
 	if (pthread_mutex_lock(&mutex) != 0) {
@@ -96,37 +95,27 @@ void mutexUnlock(pthread_mutex_t mutex)
 		exit(EXIT_FAILURE);
 	}
 }
+*/
 
 void threadPause(int id)
 {
-	mutexLock(gmutex);
+	pthread_mutex_lock(&gmutex);
 	procs[id].paused = TRUE;
-	mutexUnlock(gmutex);
+	pthread_mutex_unlock(&gmutex);
 }
 
 void threadResume(int id)
 {
-	mutexLock(gmutex);
+	pthread_mutex_lock(&gmutex);
 	procs[id].paused = FALSE;
 	pthread_cond_broadcast(&procs[id].cond);
-	mutexUnlock(gmutex);
+	pthread_mutex_unlock(&gmutex);
 }
 
 void threadStatus(int id)
 {
-	mutexLock(gmutex);	
+	pthread_mutex_lock(&gmutex);
 	while (procs[id].paused)  
 		pthread_cond_wait(&procs[id].cond, &gmutex);
-	mutexUnlock(gmutex);
-
+	pthread_mutex_unlock(&gmutex);	
 }
-
-/*
-if (id == 1) {
-		if (pthread_mutex_trylock(&gmutex) == 0) {
-			printf("mutex sucedido\n");
-			pthread_mutex_unlock(&gmutex);
-		}
-		else printf("thread %d nao controla mutex\n", id);
-	}
-*/

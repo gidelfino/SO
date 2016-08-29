@@ -61,10 +61,10 @@ procs o vetor de processos e ctxch o numero de mudancas de contexto */
 void writeFile(char *fname, int n, Process procs[], int ctxch);
 
 /* Funcao que tranca o mutex da thread com identificador id */
-void mutexLock(pthread_mutex_t mutex);
+/*void mutexLock(pthread_mutex_t mutex);*/
 
 /* Funcao que destranca o mutex da thread com identificador id */
-void mutexUnlock(pthread_mutex_t mutex);
+/*void mutexUnlock(pthread_mutex_t mutex);*/
 
 /* Funcao que pausa a thread de identificador id */
 void threadPause(int id);

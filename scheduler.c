@@ -17,15 +17,13 @@ void *timeOperation(void *tid)
 	id = *((int *) tid);
 
 	/* Se os processadores estao ocupados, esperar */
-	if (tnumb >= pnumb) 
+	if (tnumb >= pnumb)
 		threadPause(id);
 	threadStatus(id);
-
-	printf("processo %d chegou a esse ponto\n", id);
 	
-	mutexLock(gmutex);
+	pthread_mutex_lock(&gmutex);
 	tnumb++; 
-	mutexUnlock(gmutex);
+	pthread_mutex_unlock(&gmutex);
 
 	/* Simulacao de execucao */
 	start = clock();
@@ -41,9 +39,9 @@ void *timeOperation(void *tid)
 		}
 	}		
 
-	mutexLock(gmutex); 
+	pthread_mutex_lock(&gmutex);
 	tnumb--; 
-	mutexUnlock(gmutex);
+	pthread_mutex_unlock(&gmutex);
 
 	if (dflag == 1) {
 		printf("Processo da linha [%d]", procs[id].tl);  
