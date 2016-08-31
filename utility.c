@@ -7,6 +7,7 @@
 #include "scheduler.h"
 
 int dflag;
+int pline;
 int sched;
 int pnext;
 int pnumb;
@@ -14,6 +15,7 @@ int tnumb;
 
 clock_t gstart;
 pthread_mutex_t gmutex;
+pthread_mutex_t lmutex;
 Process procs[MAX_SIZE];
 
 
@@ -99,23 +101,23 @@ void mutexUnlock(pthread_mutex_t mutex)
 
 void threadPause(int id)
 {
-	pthread_mutex_lock(&gmutex);
+	pthread_mutex_lock(&lmutex);
 	procs[id].paused = TRUE;
-	pthread_mutex_unlock(&gmutex);
+	pthread_mutex_unlock(&lmutex);
 }
 
 void threadResume(int id)
 {
-	pthread_mutex_lock(&gmutex);
+	pthread_mutex_lock(&lmutex);
 	procs[id].paused = FALSE;
 	pthread_cond_broadcast(&procs[id].cond);
-	pthread_mutex_unlock(&gmutex);
+	pthread_mutex_unlock(&lmutex);
 }
 
 void threadStatus(int id)
 {
-	pthread_mutex_lock(&gmutex);
+	pthread_mutex_lock(&lmutex);
 	while (procs[id].paused)  
-		pthread_cond_wait(&procs[id].cond, &gmutex);
-	pthread_mutex_unlock(&gmutex);	
+		pthread_cond_wait(&procs[id].cond, &lmutex);
+	pthread_mutex_unlock(&lmutex);	
 }

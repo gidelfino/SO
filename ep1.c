@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 	int i, n;
 
 	n = dflag = pnext = 0;
-	pnumb = sysconf(_SC_NPROCESSORS_ONLN);
+	pnumb = 1; /* sysconf(_SC_NPROCESSORS_ONLN); */
 
 	/* argv[]:	
 	1- No. escalonador	3- Arquivo saida

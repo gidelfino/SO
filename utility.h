@@ -34,13 +34,15 @@ typedef struct process Process;
 
 /* Variaveis globais */
 extern int dflag;   /* Parametro d opcional */
+extern int pline;   /* Linha de impressao do arquivo de saida */
 extern int sched;   /* Escalonador escolhido */
 extern int pnext;   /* Proximo processo que esta em espera */
 extern int pnumb;   /* Numero de processadores na maquina */
 extern int tnumb;   /* Numero de threads executando no momento */
 
 extern clock_t gstart;          /* Instante de inicio do programa */
-extern pthread_mutex_t gmutex;  /* Mutex global para exclusao mutua */
+extern pthread_mutex_t gmutex;  /* Mutex global para uso geral */
+extern pthread_mutex_t lmutex;  /* Mutex global para locks e unlocks */
 extern Process procs[MAX_SIZE]; /* Vetor de processos */
 
 

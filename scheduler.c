@@ -1,14 +1,17 @@
+#define _GNU_SOURCE 	/* Utilizado por sched.h */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>	
+#include <sched.h>
 
 #include "utility.h"
 
 #define TIME_TOL	0.1 /* Tolerancia de tempo */
 
 
-void *timeOperation(void *tid)
+void *timeOperation(void *tid) /* COLOCAR OS PRINTS DOS DFLAGS */
 {
 	int id;
 	double elapsed;
@@ -45,10 +48,14 @@ void *timeOperation(void *tid)
 
 	if (dflag == 1) {
 		printf("Processo da linha [%d]", procs[id].tl);  
-		printf(" finalizado, escrito na linha [%d].\n", id + 1);
+		printf(" finalizado, escrito na linha [%d].\n", pline + 1);
 	}
+	pline = pline + 1;
+
+	pthread_mutex_lock(&gmutex);
 	nextProcess();
 	threadResume(pnext);
+	pthread_mutex_unlock(&gmutex);
 
 	return 0;
 }
