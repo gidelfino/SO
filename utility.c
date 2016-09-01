@@ -42,9 +42,7 @@ void nextProcess(int id) {
 			break;
 		case 2: /* Shortest Remaining Time Next */
 			pthread_mutex_lock(&hmutex);
-			printf("Before top da heap sz %d\n", ready->size);
 			MAXHEAPremove(running, procs, ((double)clock() - (double)gstart) / CLOCKS_PER_SEC, id);
-			printf("After top da heap sz %d\n", ready->size);
 			pthread_mutex_unlock(&hmutex);
 			break;
 		default:

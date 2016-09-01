@@ -58,7 +58,7 @@ void MINHEAPpop(MinHeap H, Process procs[]) {
     if (H->size == 0) return;
     ret = H->heap[1];
     H->heap[1] = H->heap[H->size];
-    H->heap[H->size] = -CORNER; 
+    procs[H->heap[H->size]].pt = -CORNER; 
     (H->size)--; 
     MINHEAPset(H->heap, procs, H->msk, 1, H->size);
     H->msk[ret] = -1;

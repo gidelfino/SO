@@ -20,7 +20,7 @@ MaxHeap MAXHEAPinit(int N)
     H = malloc(sizeof *H);
     H->heap = malloc(2 * N * sizeof(int));
     H->msk = malloc((N + 2) * sizeof(int));
-    for (i = 0; i <= N; i++) H->msk[i] = -1;
+    for (i = 0; i <= N; i++) H->msk[i] = H->heap[i] = -1;
     H->size = 0;
     return H;
 }
@@ -69,7 +69,7 @@ void MAXHEAPpop(MaxHeap H, Process procs[], double ct)
     if (H->size == 0) return;
     ret = H->heap[1];
     H->heap[1] = H->heap[H->size];
-    /* H->heap[H->size] = CORNER; */
+    procs[H->heap[H->size]].pt = CORNER;
     (H->size)--; 
     MAXHEAPset(H->heap, procs, H->msk, ct, 1, H->size);
     H->msk[ret] = -1;
