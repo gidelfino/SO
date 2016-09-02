@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
 				break;
 			case 2: /* Shortest Remaining Time Next */
 				printf("Shortest Remaining Time Next\n");
+				shortestRemaining(n);
 				break;
 			case 3: /* Escalonamento com multiplas filas */
 				printf("Escalonamento com múltiplas filas\n");
@@ -66,3 +67,5 @@ int main(int argc, char *argv[])
 
  	return 0;
 }	
+
+/* LEMBRAR DO FREES */

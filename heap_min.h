@@ -7,12 +7,17 @@
 
 
 /* Struct de uma heap de minimo */
+typedef struct heap_min *MinHeap;
 struct heap_min {
 	int size;   /* Tamanho da heap */
 	int *msk; 	/* msk[id] = i me dá onde está o processo id dentro da heap (heap[i] = id) */
 	int *heap;	/* Vetor heap */
 };
-typedef struct heap_min *MinHeap;
+
+
+/* Variaveis globais */
+extern MinHeap ready;	/* Heap de processos em espera */
+
 
 /* Funcao que recebe o numero de processadores N e retorna
 um vetor heap ja alocado */
@@ -24,7 +29,7 @@ void MINHEAPinsert(MinHeap H, Process procs[], int id) ;
 
 /* Funcao que retorna o id do processo com menor tempo restante
 que esta sendo processado e o remove da heap */
-int MINHEAPpop(MinHeap H, Process procs[]);
+void MINHEAPpop(MinHeap H, Process procs[]);
 
 /* Funcao que retorna o id do processo com menor tempo restante
 mas nao o remove da heap (utilizado para consutas) */

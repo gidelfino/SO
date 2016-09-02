@@ -14,7 +14,7 @@ MinHeap MINHEAPinit(int N) {
     H = malloc(sizeof *H);
     H->heap = malloc(2 * N * sizeof(int));
     H->msk = malloc((N + 2) * sizeof(int));
-    for (i = 0; i <= N; i++) H->msk[i] = -1;
+    for (i = 0; i <= N; i++) H->msk[i] = H->heap[i] = -1;
     H->size = 0;
     return H;
 }
@@ -53,15 +53,15 @@ static void MINHEAPset(int heap[], Process procs[], int *msk, int no, int size) 
     }
 }
 
-int MINHEAPpop(MinHeap H, Process procs[]) {
+void MINHEAPpop(MinHeap H, Process procs[]) {
     int ret;
-    if (H->size == 0) return -1;
+    if (H->size == 0) return;
     ret = H->heap[1];
     H->heap[1] = H->heap[H->size];
-    H->heap[H->size] = -CORNER; (H->size)--; 
+    H->heap[H->size] = -CORNER; 
+    (H->size)--; 
     MINHEAPset(H->heap, procs, H->msk, 1, H->size);
     H->msk[ret] = -1;
-    return ret;
 }
 
 int MINHEAPtop(MinHeap H) {

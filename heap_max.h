@@ -14,6 +14,11 @@ struct heap_max {
 };
 typedef struct heap_max *MaxHeap;
 
+
+/* Variaveis globais */
+extern MaxHeap running;		/* Heap de processos em execucao */
+
+
 /* Funcao que recebe o numero N de processadores e retorna 
 um vetor heap ja alocado */
 MaxHeap MAXHEAPinit(int N);
@@ -24,7 +29,7 @@ void MAXHEAPinsert(MaxHeap H, Process procs[], double ct, int id) ;
 
 /* Funcao que retorna o id do processo com maior tempo restante
 que esta sendo processado e o remove da heap (ct e o tempo atual) */
-int MAXHEAPpop(MaxHeap H, Process procs[], double ct);
+void MAXHEAPpop(MaxHeap H, Process procs[], double ct);
 
 /* Funcao que retorna o id do processo com maior tempo restante
 mas nao o remove da heap (utilizado para consutas) */

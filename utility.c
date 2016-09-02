@@ -5,6 +5,8 @@
 
 #include "utility.h"
 #include "scheduler.h"
+#include "heap_min.h"
+#include "heap_max.h"
 
 int dflag;
 int pline;
@@ -13,8 +15,12 @@ int pnext;
 int pnumb;
 int tnumb;
 
+MinHeap ready;
+MaxHeap running;
+
 clock_t gstart;
 pthread_mutex_t gmutex;
+pthread_mutex_t hmutex;
 pthread_mutex_t lmutex;
 Process procs[MAX_SIZE];
 
@@ -26,15 +32,28 @@ void swap(int *a, int *b)
     *b = aux;
 }
 
-void nextProcess() {
+void nextProcess(int id) {
 	switch (sched) {
 		case 1:	/* First-Come First-Served */
+			pthread_mutex_lock(&gmutex);
 			pnext = pnext + 1;
+			threadResume(pnext);
+			pthread_mutex_unlock(&gmutex);
+			break;
+		case 2: /* Shortest Remaining Time Next */
+			pthread_mutex_lock(&hmutex);
+			printf("Before top da heap sz %d\n", ready->size);
+			MAXHEAPremove(running, procs, ((double)clock() - (double)gstart) / CLOCKS_PER_SEC, id);
+			printf("After top da heap sz %d\n", ready->size);
+			pthread_mutex_unlock(&hmutex);
 			break;
 		default:
 			printf("Erro na seleção do próximo processo.\n");
 			exit(EXIT_FAILURE);
 	}
+	pthread_mutex_lock(&gmutex);
+	tnumb--;
+	pthread_mutex_unlock(&gmutex);
 }
 
 void readFile(char *fname, int *n, Process procs[]) 
@@ -99,6 +118,14 @@ void mutexUnlock(pthread_mutex_t mutex)
 }
 */
 
+void threadCreate(int id)
+{
+	if (pthread_create(&procs[id].thread, NULL, timeOperation, (void *)&procs[id].id)) {
+		printf("Erro ao criar uma thread.\n"); 
+		exit(EXIT_FAILURE);
+	}
+}
+
 void threadPause(int id)
 {
 	pthread_mutex_lock(&lmutex);
@@ -120,4 +147,17 @@ void threadStatus(int id)
 	while (procs[id].paused)  
 		pthread_cond_wait(&procs[id].cond, &lmutex);
 	pthread_mutex_unlock(&lmutex);	
+}
+
+double threadStatusTime(int id)
+{
+	clock_t start, end;
+	pthread_mutex_lock(&lmutex);
+	start = end = clock(); 
+	while (procs[id].paused) {  
+		end = clock();
+		pthread_cond_wait(&procs[id].cond, &lmutex);
+	}
+	pthread_mutex_unlock(&lmutex);
+	return ((double)end - (double)start) / CLOCKS_PER_SEC;	
 }

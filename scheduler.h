@@ -13,5 +13,7 @@ void *timeOperation(void *tid);
 os n processos por ordem de chegada */
 void firstCome(int n);
 
+void shortestRemaining(int n);
+
 
 #endif

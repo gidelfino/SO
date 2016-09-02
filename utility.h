@@ -42,6 +42,7 @@ extern int tnumb;   /* Numero de threads executando no momento */
 
 extern clock_t gstart;          /* Instante de inicio do programa */
 extern pthread_mutex_t gmutex;  /* Mutex global para uso geral */
+extern pthread_mutex_t hmutex;  /* Mutex global para heaps */
 extern pthread_mutex_t lmutex;  /* Mutex global para locks e unlocks */
 extern Process procs[MAX_SIZE]; /* Vetor de processos */
 
@@ -50,7 +51,7 @@ extern Process procs[MAX_SIZE]; /* Vetor de processos */
 void swap(int *a, int *b);
 
 /* Funcao que atualiza pnext para o processo em espera seguinte */
-void nextProcess();
+void nextProcess(int id);
 
 /* Funcao de leitura do arquivo de trace, onde: 
 fname o nome do arquivo de trace, n o contador de numero de processos
@@ -68,6 +69,9 @@ void writeFile(char *fname, int n, Process procs[], int ctxch);
 /* Funcao que destranca o mutex da thread com identificador id */
 /*void mutexUnlock(pthread_mutex_t mutex);*/
 
+/* Funcao que cria uma thread com identificado id */
+void threadCreate(int id);
+
 /* Funcao que pausa a thread de identificador id */
 void threadPause(int id);
 
@@ -77,5 +81,9 @@ void threadResume(int id);
 /* Funcao que verifica se a thread esta pausada. 
 Se sim, ela trava a thread ate ela ser resumida */
 void threadStatus(int id);
+
+/* Versao do threadStatus que retorna o tempo em que
+a thread ficou pausada */
+double threadStatusTime(int id);
 
 #endif

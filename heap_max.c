@@ -63,17 +63,17 @@ static void MAXHEAPset(int heap[], Process procs[], int *msk, double ct, int no,
     }
 }
 
-int MAXHEAPpop(MaxHeap H, Process procs[], double ct)
+void MAXHEAPpop(MaxHeap H, Process procs[], double ct)
 {
     int ret;
-    if (H->size == 0) return -1;
+    if (H->size == 0) return;
     ret = H->heap[1];
     H->heap[1] = H->heap[H->size];
-    H->heap[H->size] = CORNER; (H->size)--; 
+    /* H->heap[H->size] = CORNER; */
+    (H->size)--; 
     MAXHEAPset(H->heap, procs, H->msk, ct, 1, H->size);
     H->msk[ret] = -1;
     procs[ret].rt -= (ct - procs[ret].pt); /* Atualiza o novo tempo restante */
-    return ret;
 }
 
 int MAXHEAPtop(MaxHeap H)
