@@ -5,8 +5,8 @@
 
 #include "utility.h"
 #include "scheduler.h"
-#include "heap_min.h"
-#include "heap_max.h"
+#include "minheap.h"
+#include "maxheap.h"
 
 int dflag;
 int pline;
@@ -32,7 +32,8 @@ void swap(int *a, int *b)
     *b = aux;
 }
 
-void nextProcess(int id) {
+void nextProcess(int id)
+{
 	switch (sched) {
 		case 1:	/* First-Come First-Served */
 			pthread_mutex_lock(&gmutex);
@@ -42,7 +43,7 @@ void nextProcess(int id) {
 			break;
 		case 2: /* Shortest Remaining Time Next */
 			pthread_mutex_lock(&hmutex);
-			MAXHEAPremove(running, procs, ((double)clock() - (double)gstart) / CLOCKS_PER_SEC, id);
+			maxHeapRemove(running, procs, id);
 			pthread_mutex_unlock(&hmutex);
 			break;
 		default:
@@ -97,24 +98,6 @@ void writeFile(char *fname, int n, Process procs[], int ctxch)
 
 	fclose(file);
 }
-
-/*
-void mutexLock(pthread_mutex_t mutex)
-{
-	if (pthread_mutex_lock(&mutex) != 0) {
-		perror("pthread_mutex_lock()");
-		exit(EXIT_FAILURE);
-	}
-}
-
-void mutexUnlock(pthread_mutex_t mutex)
-{	
-	if (pthread_mutex_unlock(&mutex) != 0) {
-		perror("pthread_mutex_unlock()");
-		exit(EXIT_FAILURE);
-	}
-}
-*/
 
 void threadCreate(int id)
 {

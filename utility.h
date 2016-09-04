@@ -19,7 +19,6 @@ struct process
 
     int id;         /* Posicao do processo por ordem de chegada */
     int tl;         /* Linha do processo no arquivo de trace */
-    double pt;      /* Instante que a thread comeca a ser processada */
     double rt;      /* Tempo restante de execucao */
     double tf;      /* Instante de termino */
 
@@ -62,12 +61,6 @@ void readFile(char *fname, int *n, Process procs[]);
 fname e o nome do arquivo de saida, n o numero de processos simulados,
 procs o vetor de processos e ctxch o numero de mudancas de contexto */
 void writeFile(char *fname, int n, Process procs[], int ctxch);
-
-/* Funcao que tranca o mutex da thread com identificador id */
-/*void mutexLock(pthread_mutex_t mutex);*/
-
-/* Funcao que destranca o mutex da thread com identificador id */
-/*void mutexUnlock(pthread_mutex_t mutex);*/
 
 /* Funcao que cria uma thread com identificado id */
 void threadCreate(int id);
