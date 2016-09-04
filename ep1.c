@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 		for (i = 0; i < n; i++) { 
 			procs[i].id = i;
 			procs[i].rt = procs[i].dt;
-			procs[i].paused = FALSE;
+			procs[i].paused = TRUE;
 		}
 
 		/* Execucao do escalonador escolhido */
@@ -68,4 +68,4 @@ int main(int argc, char *argv[])
  	return 0;
 }	
 
-/* LEMBRAR DO FREES */
+/* LEMBRAR DO FREES, PRINTS, WHILE DO SHORTESTREMAINING */

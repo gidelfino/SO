@@ -4,6 +4,10 @@
 #include "utility.h"
 
 
+/* Funcao que realiza as operacoes necessarias
+para executar o proximo processo */
+void nextProcess(int id);
+
 /* Funcao que realiza uma operacao que consome tempo 
 real da CPU para o processo de identificador tid 
 (Ou seja, que a simula execucao de uma thread) */

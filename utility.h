@@ -43,14 +43,12 @@ extern clock_t gstart;          /* Instante de inicio do programa */
 extern pthread_mutex_t gmutex;  /* Mutex global para uso geral */
 extern pthread_mutex_t hmutex;  /* Mutex global para heaps */
 extern pthread_mutex_t lmutex;  /* Mutex global para locks e unlocks */
+
 extern Process procs[MAX_SIZE]; /* Vetor de processos */
 
 
 /* Funcao que troca os valores de duas variaveis */
 void swap(int *a, int *b);
-
-/* Funcao que atualiza pnext para o processo em espera seguinte */
-void nextProcess(int id);
 
 /* Funcao de leitura do arquivo de trace, onde: 
 fname o nome do arquivo de trace, n o contador de numero de processos

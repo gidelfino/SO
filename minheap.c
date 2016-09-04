@@ -19,9 +19,10 @@ MinHeap minHeapInit(int n)
     H = malloc(sizeof *H);
     H->heap = malloc(2 * n * sizeof(int));
     H->msk = malloc((n + 2) * sizeof(int));
-    for (i = 0; i <= n; i++) H->msk[i] = H->heap[i] = -1;
-    H->size = 0;
     
+    H->size = 0;
+    for (i = 0; i <= n; i++) H->msk[i] = H->heap[i] = -1;
+
     return H;
 }
 
