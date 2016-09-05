@@ -94,8 +94,6 @@ int maxHeapTop(MaxHeap H)
 
 void maxHeapRemove(MaxHeap H, Process procs[], int id)
 {
-    printf("%d\n", H->size);
-
     maxHeapUpdate(H->heap, H->msk, procs, H->msk[id]);
     maxHeapPop(H, procs);
 }
@@ -103,6 +101,6 @@ void maxHeapRemove(MaxHeap H, Process procs[], int id)
 void maxHeapFree(MaxHeap H)
 {
     free(H->heap);
-    /*free(H->msk);*/
+    free(H->msk);
     free(H);
 }
