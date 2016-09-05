@@ -14,6 +14,7 @@ int sched;
 int pnext;
 int pnumb;
 int tnumb;
+int ctxch;
 
 MinHeap ready;
 MaxHeap running;
@@ -74,6 +75,13 @@ void writeFile(char *fname, int n, Process procs[], int ctxch)
 	}
 
 	fclose(file);
+}
+
+void freeProcess(int n, Process procs[])
+{
+	int i;	
+	for (i = 0; i < n; i++)
+		free(procs[i].name);
 }
 
 void threadCreate(int id)

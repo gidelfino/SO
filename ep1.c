@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 {
 	int i, n;
 
-	n = dflag = pnext = 0;
+	n = dflag = pnext = ctxch = 0;
 	pnumb = 1; /* sysconf(_SC_NPROCESSORS_ONLN); */
 
 	/* argv[]:	
@@ -57,7 +57,9 @@ int main(int argc, char *argv[])
 				printf("Erro ao esperar uma thread finalizar.\n"); 
 				exit(EXIT_FAILURE);
 			}
-		writeFile(argv[3], n, procs, 0); /* NAO ESQUECER DE ALTERAR O ULTIMO PARAMETRO (ctxch) */
+		
+		writeFile(argv[3], n, procs, ctxch);
+		freeProcess(n, procs);
 
 	}
 	else {
@@ -68,4 +70,4 @@ int main(int argc, char *argv[])
  	return 0;
 }	
 
-/* LEMBRAR DO FREES, PRINTS, WHILE DO SHORTESTREMAINING */
+/* LEMBRAR DO FREES, PRINTS */

@@ -7,7 +7,7 @@
 /* Struct de uma heap de maximo */
 struct maxheap {
 	int size;   /* Tamanho da heap */
-	int *msk; 	/* msk[id] = i me dá onde está o processo id dentro da heap (heap[i] = id) */
+	int *msk; 	/* msk[id] = i me da onde esta o processo id dentro da heap (heap[i] = id) */
 	int *heap;	/* Vetor heap */
 };
 typedef struct maxheap *MaxHeap;
@@ -34,5 +34,8 @@ int maxHeapTop(MaxHeap H);
 
 /* Funcao que remove da heap o processo com identificador id */
 void maxHeapRemove(MaxHeap H, Process procs[], int id);
+
+/* Funcao que libera toda a memoria alocada para a heap */
+void maxHeapFree(MaxHeap H);
 
 #endif

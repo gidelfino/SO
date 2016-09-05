@@ -23,6 +23,8 @@ void nextProcess(int id)
 			pthread_mutex_unlock(&gmutex);
 			break;
 		case 2: /* Shortest Remaining Time Next */
+			    printf("%d\n", running->size);
+
 			pthread_mutex_lock(&hmutex);
 			maxHeapRemove(running, procs, id);
 			pthread_mutex_unlock(&hmutex);
@@ -49,19 +51,21 @@ void *timeOperation(void *tid)
 		threadResume(id);
 	threadStatus(id);
 	
+	procs[id].cpu = sched_getcpu();
+
 	if (sched == 1) {
+		printf("Processo da linha [%d] esta usando a CPU [%d]\n", 
+			procs[id].tl, procs[id].cpu);
 		pthread_mutex_lock(&gmutex);
 		tnumb++; 
 		pthread_mutex_unlock(&gmutex);
 	}
 
-
-
 	/* Simulacao de execucao */
 	start = clock();
 	while (TRUE) {
 		inactive = threadStatusTime(id);
-		if (inactive > 0) printf("%f\n", inactive);	
+		procs[id].cpu = sched_getcpu();
 		end = clock();
 		elapsed = ((double)end - (double)start) / CLOCKS_PER_SEC;
 		elapsed -= inactive;
@@ -73,11 +77,11 @@ void *timeOperation(void *tid)
 		}
 	}		
 
+	pline++;
 	if (dflag == 1) {
 		printf("Processo da linha [%d]", procs[id].tl);  
 		printf(" finalizado, escrito na linha [%d].\n", procs[id].tl);
-	}
-	pline++;
+	};
 
 	nextProcess(id);
 	return 0;
@@ -144,9 +148,13 @@ void shortestRemaining(int n)
 
 		/* Preempcao quando um dos processos em espera e menor que um executando */
 		if (topid != -1 && botid != -1 && procs[topid].rt > procs[botid].rt) {
-			printf("TROCA DO PROCESSO %d POR %d\n", topid, botid);
-			printf("%f\n", (double)elapsed);
-			printf("%f\n", procs[topid].rt);
+			if (dflag == 1) {
+				printf("Processo da linha [%d] deixou de usar a CPU [%d].\n", 
+					procs[topid].tl, procs[topid].cpu);
+				printf("Processo da linha [%d] começou a usar a CPU [%d].\n", 
+					procs[botid].tl, procs[botid].cpu);
+			}
+
 			threadPause(topid);
 
 			pthread_mutex_lock(&hmutex);
@@ -156,14 +164,18 @@ void shortestRemaining(int n)
 			minHeapInsert(ready, procs, topid);
 			pthread_mutex_unlock(&hmutex);
 
+			pthread_mutex_lock(&gmutex);
+			ctxch++;
+			pthread_mutex_unlock(&gmutex);
+
 			threadResume(botid);
 		}
 
 		/* Processador disponivel e lista de espera nao vazia */
 		else if (tnumb < pnumb && botid != -1) {
-			printf("PROCESSADOR LIVRE, RODANDO PROCESSO %d\n", botid);
-			printf("%f\n", (double)elapsed);
-			printf("%f\n", procs[botid].rt);
+			if (dflag == 1)
+				printf("Processo da linha [%d] começou a usar a CPU [%d].\n", 
+					procs[botid].tl, procs[botid].cpu);	
 			
 			pthread_mutex_lock(&gmutex);
 			tnumb++; 
@@ -177,4 +189,9 @@ void shortestRemaining(int n)
 			threadResume(botid);
 		}
 	}
+
+	pthread_mutex_lock(&hmutex);
+	minHeapFree(ready);
+	maxHeapFree(running);
+	pthread_mutex_unlock(&hmutex);
 }

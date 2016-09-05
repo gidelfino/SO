@@ -98,3 +98,10 @@ void minHeapRemove(MinHeap H, Process procs[], int id)
     minHeapUpdate(H->heap, H->msk, procs, H->msk[id]);
     minHeapPop(H, procs);
 }
+
+void minHeapFree(MinHeap H)
+{
+    free(H->heap);
+    free(H->msk);
+    free(H);
+}

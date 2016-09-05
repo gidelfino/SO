@@ -36,4 +36,7 @@ int minHeapTop(MinHeap H);
 /* Funcao que remove da heap o processo id */
 void minHeapRemove(MinHeap H, Process procs[], int id);
 
+/* Funcao que libera toda a memoria alocada para a heap */
+void minHeapFree(MinHeap H);
+
 #endif
