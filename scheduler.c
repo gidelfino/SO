@@ -11,6 +11,8 @@
 
 #define TIME_TOL	0.1 /* Tolerancia de tempo */
 
+int fila[MAX_SIZE];
+int ini, fim;
 
 void nextProcess(int id)
 {
@@ -19,27 +21,35 @@ void nextProcess(int id)
 			pthread_mutex_lock(&gmutex);
 			pnext = pnext + 1;
 			threadResume(pnext);
+			pline++;
 			pthread_mutex_unlock(&gmutex);
 			break;
 		case 2: /* Shortest Remaining Time Next */
 			/* printf("%d\n", running->size); */
 			pthread_mutex_lock(&hmutex);
 			maxHeapRemove(running, procs, id);
+			pline++;
 			pthread_mutex_unlock(&hmutex);
+
 			break;
 		case 3: /* Multiplas Filas */
 			pthread_mutex_lock(&hmutex);
 			/* Caso nao tenha mais tempo para rodar nao faco nada */
-			if (procs[id].left <= 0.0 + TIME_TOL)
+			if (procs[id].left <= 0.0 + TIME_TOL) {
+				pline++; 
+				tnumb--;
 				return;
+			}
 			/* Aqui sabemos que o processo passara para a fila seguinte */
-			procs[id].qt++;
+			procs[id].qt *= 2.0;
 			procs[id].rt = procs[id].left;
-			procs[id].left = procs[id].left - procs[id].qt * QUANTUM;
+			procs[id].left = procs[id].left - procs[id].qt;
 			if (procs[id].left > 0.0 - TIME_TOL)
-				procs[id].rt = procs[id].qt * QUANTUM;
+				procs[id].rt = procs[id].qt;
+			printf("Colocando processo %d na fila com rt %f e faltando %f\n", procs[id].tl, procs[id].rt, procs[id].left);
 			fila[fim++] = id;
-			threadCreate(id); //COmo nao deixar essa thread entrar direto a nao ser que tenha espaço <----------
+			threadCreate(id);
+			threadPause(id);
 			pthread_mutex_unlock(&hmutex);
 			break;
 		default:
@@ -59,11 +69,12 @@ void *timeOperation(void *tid)
 
 	id = *((int *) tid);
 
+	if (sched == 3) threadStatus(id);
 	/* Se os processadores estao ocupados, esperar */
 	if (tnumb < pnumb)
 		threadResume(id);
 	threadStatus(id);
-	procs[id].cpu = sched_getcpu();
+	/* procs[id].cpu = sched_getcpu(); */
 
 	if (sched == 1) {
 		printf("Processo da linha [%d] esta usando a CPU [%d]\n", 
@@ -77,7 +88,7 @@ void *timeOperation(void *tid)
 	start = clock();
 	while (TRUE) {
 		inactive = threadStatusTime(id);
-		procs[id].cpu = sched_getcpu();
+		/* procs[id].cpu = sched_getcpu(); */
 		end = clock();
 		elapsed = ((double)end - (double)start) / CLOCKS_PER_SEC;
 		elapsed -= inactive;
@@ -89,7 +100,6 @@ void *timeOperation(void *tid)
 		}
 	}		
 
-	pline++;
 	if (dflag == 1) {
 		printf("Processo da linha [%d]", procs[id].tl);  
 		printf(" finalizado, escrito na linha [%d].\n", procs[id].tl);
@@ -123,16 +133,15 @@ void firstCome(int n)
 	}
 }
 
-void MultiplasFilas(int n) 
+void multiplasFilas(int n) 
 {
 	clock_t end, elapsed;
 	int i;
 
-	elapsed = ini = fim = 0;
+	elapsed = ini = fim = i = 0;
 	while (pline < n) {
 		end = clock();
 		elapsed = ((double)end - (double)gstart) / CLOCKS_PER_SEC;
-
 		/* Chegamos ao instante de chegada de uma thread */
 		if (elapsed >= procs[i].at - TIME_TOL && elapsed <= procs[i].at + TIME_TOL) {
 			if (dflag == 1) 
@@ -142,7 +151,7 @@ void MultiplasFilas(int n)
 			procs[i].left = procs[i].rt - QUANTUM;
 			if (procs[i].left >= 0.0)
 				procs[i].rt = QUANTUM;
-			procs[i].qt = 1;
+			procs[i].qt = 1.0;
 			pthread_mutex_unlock(&hmutex);
 
 			threadCreate(i);
@@ -153,14 +162,16 @@ void MultiplasFilas(int n)
 		if (tnumb < pnumb && fim > ini) {
 			if (dflag == 1)
 				printf("Processo da linha [%d] começou a usar a CPU [%d].\n", 
-					procs[botid].tl, procs[botid].cpu);	
+					procs[fila[ini]].tl, procs[fila[ini]].cpu);	
 
 			pthread_mutex_lock(&gmutex);
-			tnumb++; 
+			tnumb++; 			
 			pthread_mutex_unlock(&gmutex);
 
-			threadResume(ini);
-			ini++;
+			threadResume(fila[ini]);
+			pthread_mutex_lock(&gmutex);
+			ini++; 			
+			pthread_mutex_unlock(&gmutex);
 		}
 	}	
 }

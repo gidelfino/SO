@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
 				break;
 			case 3: /* Escalonamento com multiplas filas */
 				printf("Escalonamento com múltiplas filas\n");
+				multiplasFilas(n); 
 				break;
 			default:
 				printf("Escalonador escolhido incorreto.\n");

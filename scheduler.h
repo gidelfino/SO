@@ -19,5 +19,7 @@ void firstCome(int n);
 
 void shortestRemaining(int n);
 
+void multiplasFilas(int n);
+
 
 #endif

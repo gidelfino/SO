@@ -21,7 +21,7 @@ struct process
     int id;         /* Posicao do processo por ordem de chegada */
     int tl;         /* Linha do processo no arquivo de trace */
     int cpu;        /* CPU sendo usada pelo processo */
-    int qt;         /* Nivel de quantum separado para esse processo */
+    double qt;      /* Quantum que o processo pode usar da CPU */
     double rt;      /* Tempo restante de execucao */
     double tf;      /* Instante de termino */
     double left;    /* Tempo rt subtraido do quantum */
@@ -43,8 +43,6 @@ extern int pnext;   /* Proximo processo que esta em espera */
 extern int pnumb;   /* Numero de processadores na maquina */
 extern int tnumb;   /* Numero de threads executando no momento */
 extern int ctxch;   /* Numero de mudancas de contexto */
-extern int ini, fim;/* Inicio e fim da fila do escalonador 3 */
-extern int fila[MAX_SIZE]; /* Fila do escalonador 3 */
 
 extern clock_t gstart;          /* Instante de inicio do programa */
 extern pthread_mutex_t gmutex;  /* Mutex global para uso geral */
@@ -52,6 +50,7 @@ extern pthread_mutex_t hmutex;  /* Mutex global para heaps */
 extern pthread_mutex_t lmutex;  /* Mutex global para locks e unlocks */
 
 extern Process procs[MAX_SIZE]; /* Vetor de processos */
+
 
 
 /* Funcao que troca os valores de duas variaveis */
