@@ -47,8 +47,8 @@ void nextProcess(int id)
 				procs[id].rt = procs[id].qt;
 			printf("Colocando processo %d na fila com rt %f e faltando %f\n", procs[id].tl, procs[id].rt, procs[id].left);
 			fila[fim++] = id;
-			threadCreate(id);
 			threadPause(id);
+			threadCreate(id);
 			pthread_mutex_unlock(&hmutex);
 			break;
 		default:
@@ -68,9 +68,8 @@ void *timeOperation(void *tid)
 
 	id = *((int *) tid);
 
-	if (sched == 3) threadStatus(id);
 	/* Se os processadores estao ocupados, esperar */
-	if (tnumb < pnumb)
+	if (sched == 1 && tnumb < pnumb)
 		threadResume(id);
 	threadStatus(id);
 	/* procs[id].cpu = sched_getcpu(); */
@@ -152,7 +151,6 @@ void multiplasFilas(int n)
 				procs[i].rt = QUANTUM;
 			procs[i].qt = 1.0;
 			pthread_mutex_unlock(&hmutex);
-
 			threadCreate(i);
 			i++;
 		}
@@ -162,7 +160,6 @@ void multiplasFilas(int n)
 			if (dflag == 1)
 				printf("Processo da linha [%d] começou a usar a CPU [%d].\n", 
 					procs[fila[ini]].tl, procs[fila[ini]].cpu);	
-
 			pthread_mutex_lock(&gmutex);
 			tnumb++; 			
 			pthread_mutex_unlock(&gmutex);
