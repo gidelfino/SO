@@ -7,6 +7,7 @@
 #define TRUE        1
 #define FALSE       0
 #define MAX_SIZE    1025
+#define QUANTUM     1.0
 
 
 /* Struct de um processo */
@@ -20,8 +21,10 @@ struct process
     int id;         /* Posicao do processo por ordem de chegada */
     int tl;         /* Linha do processo no arquivo de trace */
     int cpu;        /* CPU sendo usada pelo processo */
+    int qt;         /* Nivel de quantum separado para esse processo */
     double rt;      /* Tempo restante de execucao */
     double tf;      /* Instante de termino */
+    double left;    /* Tempo rt subtraido do quantum */
 
     int paused;  /* Flag que indica se a thread esta pausada */
 
@@ -40,6 +43,8 @@ extern int pnext;   /* Proximo processo que esta em espera */
 extern int pnumb;   /* Numero de processadores na maquina */
 extern int tnumb;   /* Numero de threads executando no momento */
 extern int ctxch;   /* Numero de mudancas de contexto */
+extern int ini, fim;/* Inicio e fim da fila do escalonador 3 */
+extern int fila[MAX_SIZE]; /* Fila do escalonador 3 */
 
 extern clock_t gstart;          /* Instante de inicio do programa */
 extern pthread_mutex_t gmutex;  /* Mutex global para uso geral */

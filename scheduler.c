@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <string.h>	
 #include <sched.h>
-
 #include "utility.h"
 #include "minheap.h"
 #include "maxheap.h"
@@ -23,10 +22,24 @@ void nextProcess(int id)
 			pthread_mutex_unlock(&gmutex);
 			break;
 		case 2: /* Shortest Remaining Time Next */
-			    printf("%d\n", running->size);
-
+			/* printf("%d\n", running->size); */
 			pthread_mutex_lock(&hmutex);
 			maxHeapRemove(running, procs, id);
+			pthread_mutex_unlock(&hmutex);
+			break;
+		case 3: /* Multiplas Filas */
+			pthread_mutex_lock(&hmutex);
+			/* Caso nao tenha mais tempo para rodar nao faco nada */
+			if (procs[id].left <= 0.0 + TIME_TOL)
+				return;
+			/* Aqui sabemos que o processo passara para a fila seguinte */
+			procs[id].qt++;
+			procs[id].rt = procs[id].left;
+			procs[id].left = procs[id].left - procs[id].qt * QUANTUM;
+			if (procs[id].left > 0.0 - TIME_TOL)
+				procs[id].rt = procs[id].qt * QUANTUM;
+			fila[fim++] = id;
+			threadCreate(id); //COmo nao deixar essa thread entrar direto a nao ser que tenha espaço <----------
 			pthread_mutex_unlock(&hmutex);
 			break;
 		default:
@@ -50,7 +63,6 @@ void *timeOperation(void *tid)
 	if (tnumb < pnumb)
 		threadResume(id);
 	threadStatus(id);
-	
 	procs[id].cpu = sched_getcpu();
 
 	if (sched == 1) {
@@ -107,7 +119,50 @@ void firstCome(int n)
 			threadCreate(i);
 			i++;
 		}
+
 	}
+}
+
+void MultiplasFilas(int n) 
+{
+	clock_t end, elapsed;
+	int i;
+
+	elapsed = ini = fim = 0;
+	while (pline < n) {
+		end = clock();
+		elapsed = ((double)end - (double)gstart) / CLOCKS_PER_SEC;
+
+		/* Chegamos ao instante de chegada de uma thread */
+		if (elapsed >= procs[i].at - TIME_TOL && elapsed <= procs[i].at + TIME_TOL) {
+			if (dflag == 1) 
+				printf("Processo da linha [%d] chegou ao sistema.\n", procs[i].tl);	
+			pthread_mutex_lock(&hmutex);
+			fila[fim++] = i;
+			procs[i].left = procs[i].rt - QUANTUM;
+			if (procs[i].left >= 0.0)
+				procs[i].rt = QUANTUM;
+			procs[i].qt = 1;
+			pthread_mutex_unlock(&hmutex);
+
+			threadCreate(i);
+			i++;
+		}
+
+		/* Processadores vazios e lista de espera nao vazia */
+		if (tnumb < pnumb && fim > ini) {
+			if (dflag == 1)
+				printf("Processo da linha [%d] começou a usar a CPU [%d].\n", 
+					procs[botid].tl, procs[botid].cpu);	
+
+			pthread_mutex_lock(&gmutex);
+			tnumb++; 
+			pthread_mutex_unlock(&gmutex);
+
+			threadResume(ini);
+			ini++;
+		}
+	}	
 }
 
 void shortestRemaining(int n)
@@ -195,3 +250,4 @@ void shortestRemaining(int n)
 	maxHeapFree(running);
 	pthread_mutex_unlock(&hmutex);
 }
+
