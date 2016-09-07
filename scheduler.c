@@ -25,7 +25,6 @@ void nextProcess(int id)
 			pthread_mutex_unlock(&gmutex);
 			break;
 		case 2: /* Shortest Remaining Time Next */
-			/* printf("%d\n", running->size); */
 			pthread_mutex_lock(&hmutex);
 			maxHeapRemove(running, procs, id);
 			pline++;
@@ -104,7 +103,7 @@ void *timeOperation(void *tid)
 		printf("Processo da linha [%d]", procs[id].tl);  
 		printf(" finalizado, escrito na linha [%d].\n", procs[id].tl);
 	};
-
+	
 	nextProcess(id);
 	return 0;
 }
