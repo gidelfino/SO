@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 	int i, n;
 
 	n = dflag = pnext = ctxch = 0;
-	pnumb = 2; /* sysconf(_SC_NPROCESSORS_ONLN); */
+	pnumb = 1; /* sysconf(_SC_NPROCESSORS_ONLN); */
 
 	/* argv[]:	
 	1- No. escalonador	3- Arquivo saida
@@ -37,27 +37,29 @@ int main(int argc, char *argv[])
 		sched = *argv[1] - '0';
 		switch (sched) {
 			case 1: /* First-Come First-Served */
-				printf("First-Come First-Served\n");
 				firstCome(n);
 				break;
 			case 2: /* Shortest Remaining Time Next */
-				printf("Shortest Remaining Time Next\n");
 				shortestRemaining(n);
 				break;
 			case 3: /* Escalonamento com multiplas filas */
-				printf("Escalonamento com múltiplas filas\n");
+				multiplasFilas(n);
 				break;
 			default:
 				printf("Escalonador escolhido incorreto.\n");
 				exit(EXIT_FAILURE);
 		}
 
+		/* Espera todas as threads finalizarem de executar */
 		for (i = 0; i < n; i++)
 			if (pthread_join(procs[i].thread, NULL)) {
 				printf("Erro ao esperar uma thread finalizar.\n"); 
 				exit(EXIT_FAILURE);
 			}
 		
+		if (dflag == TRUE)
+			fprintf(stderr, "Número de mudanças de contexto: %d.\n", ctxch);
+
 		writeFile(argv[3], n, procs, ctxch);
 		freeProcess(n, procs);
 
