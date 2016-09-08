@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <string.h>	
 #include <sched.h>
-
 #include "utility.h"
 #include "minheap.h"
 #include "maxheap.h"
@@ -13,14 +12,18 @@
 #define TIME_TOL	0.1 /* Tolerancia de tempo */
 #define QUANTUM     1
 
+
 void nextProcess(int id)
 {
 	switch (sched) {
 		case 1:	/* First-Come First-Served */
 			pthread_mutex_lock(&gmutex);
 			pnext = pnext + 1;
-			threadResume(pnext);
 			pthread_mutex_unlock(&gmutex);
+			
+			pthread_mutex_lock(&hmutex);
+			threadResume(pnext);
+			pthread_mutex_unlock(&hmutex);
 			break;
 
 		case 2: /* Shortest Remaining Time Next */
@@ -53,7 +56,6 @@ void *timeOperation(void *tid)
 
 	/* Se os processadores estao ocupados, esperar */
 	threadStatus(id);
-	
 	procs[id].cpu = sched_getcpu();
 
 	if (sched == 1) {
@@ -137,6 +139,7 @@ void firstCome(int n)
 			threadCreate(i);
 			i++;
 		}
+
 	}
 }
 
