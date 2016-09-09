@@ -19,8 +19,9 @@ int ctxch;
 MinHeap ready;
 MaxHeap running;
 
-int first, last;
-int queue[MAX_SIZE];
+int topq;
+int first[MAX_QUEUE], last[MAX_QUEUE];
+int queue[MAX_QUEUE][MAX_SIZE];
 
 clock_t gstart;
 pthread_mutex_t gmutex;
