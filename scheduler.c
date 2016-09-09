@@ -47,7 +47,7 @@ void nextProcess(int id)
 
 void *timeOperation(void *tid)
 {
-	int id = *((int *) tid);
+	int id = *((int *) tid), nv;
 	double elapsed, inactive;
 	clock_t start, end;
 
@@ -56,7 +56,7 @@ void *timeOperation(void *tid)
 
 	/* Se os processadores estao ocupados, esperar */
 	threadStatus(id);
-	procs[id].cpu = sched_getcpu();
+	/* procs[id].cpu = sched_getcpu(); */
 
 	if (sched == 1) {
 		if (dflag == TRUE)
@@ -72,7 +72,7 @@ void *timeOperation(void *tid)
 	start = clock();
 	while (TRUE) {
 		inactive = threadStatusTime(id);
-		procs[id].cpu = sched_getcpu();
+		/* procs[id].cpu = sched_getcpu(); */
 		end = clock();
 		elapsed = ((double)end - (double)start) / CLOCKS_PER_SEC;
 		
@@ -99,7 +99,14 @@ void *timeOperation(void *tid)
 			procs[id].cq = procs[id].cp * QUANTUM;
 
 			pthread_mutex_lock(&hmutex);
-			queue[last++] = id;
+			nv = (procs[id].nivel + 1) % MAX_QUEUE;
+			procs[id].nivel = nv;
+			queue[nv][last[nv]++] = id;
+			if (nv == 0) 
+				procs[id].cp = procs[id].cq = 1;
+			if (topq > nv) topq = nv;
+			if (last[topq] <= first[topq])
+				topq = nv;
 			pthread_mutex_unlock(&hmutex);
 
 			pthread_mutex_lock(&gmutex);
@@ -229,11 +236,12 @@ void shortestRemaining(int n)
 
 void multiplasFilas(int n) 
 {
-	int i = 0;
+	int i = 0, k;
 	clock_t end, elapsed;
 	
-	first = last = 0;
-
+	for (k = 0; k < MAX_QUEUE; k++)
+		first[k] = last[k] = 0;
+	topq = 0;
 	while (pline < n) {
 		end = clock();
 		elapsed = ((double)end - (double)gstart) / CLOCKS_PER_SEC;
@@ -244,30 +252,34 @@ void multiplasFilas(int n)
 				fprintf(stderr, "Processo da linha [%d] chegou ao sistema.\n", procs[i].tl);	
 			
 			pthread_mutex_lock(&hmutex);
-			queue[last++] = i;
+			queue[0][last[0]++] = i; /* Todos processos comecam na fila 1s */
 			pthread_mutex_unlock(&hmutex);
-			
-			procs[i].cp = 1; /* Prioridade inicial igual a 1 */
-			procs[i].cq = 1; /* Quantum inicial igual a QUANTUM segundo(s) */
-
+			topq = 0;
+			procs[i].cp = 1;    /* Prioridade inicial igual a 1 */
+			procs[i].cq = 1;    /* Quantum inicial igual a QUANTUM segundo(s) */
+			procs[i].nivel = 0; /* Indice inicial da fila */
 			threadCreate(i);
 			i++;
 		}
 
 		/* Processadores disponiveis e lista de espera nao vazia */
-		if (tnumb < pnumb && last > first) {
+		if (tnumb < pnumb && last[topq] > first[topq]) {
 			if (dflag == 1)
 				fprintf(stderr, "Processo da linha [%d] começou a usar a CPU [%d].\n", 
-					procs[queue[first]].tl, procs[queue[first]].cpu);	
+					procs[queue[topq][first[topq]]].tl, procs[queue[topq][first[topq]]].cpu);	
 			
 			pthread_mutex_lock(&gmutex);
 			tnumb++; 			
 			pthread_mutex_unlock(&gmutex);
 
-			threadResume(queue[first]);
+			threadResume(queue[topq][first[topq]]);
 			
 			pthread_mutex_lock(&gmutex);
-			first++; 			
+			first[topq]++;
+			for (k = 0; k < MAX_QUEUE && last[k] <= first[k]; k++);
+			topq = k;
+			if (k == MAX_QUEUE)
+				topq = 0;
 			pthread_mutex_unlock(&gmutex);
 		}
 	}	
