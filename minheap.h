@@ -8,7 +8,7 @@
 struct minheap {
 	int size;   /* Tamanho da heap */
 	int *msk; 	/* msk[id] = i me dá onde está o processo id dentro da heap (heap[i] = id) */
-	int *heap;	/* Vetor heap */
+	int *heap;	/* Vetor da heap */
 };
 typedef struct minheap *MinHeap;
 

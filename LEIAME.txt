@@ -1,4 +1,4 @@
-Para compilar os dois binarios, basta rodar o comando "make" no diretorio correto.
+Para compilar os dois binários, basta rodar o comando "make" no diretório apropriado.
 
 Para rodar o shell (ep1sh), utilize o comando "./ep1sh".
-Para rodar o escalonador, utilize o comando "./ep1" seguido dos parametros correspondentes.
+Para rodar o escalonador, utilize o comando "./ep1" seguido dos parâmetros corretos.

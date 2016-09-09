@@ -9,9 +9,8 @@
 #include "minheap.h"
 #include "maxheap.h"
 
-#define TIME_TOL	0.1 /* Tolerancia de tempo */
 #define QUANTUM     1
-
+#define TIME_TOL	0.1 /* Tolerancia de tempo */
 
 void nextProcess(int id)
 {
@@ -47,7 +46,7 @@ void nextProcess(int id)
 
 void *timeOperation(void *tid)
 {
-	int id = *((int *) tid), nv;
+	int i, id = *((int *) tid);
 	double elapsed, inactive;
 	clock_t start, end;
 
@@ -56,7 +55,7 @@ void *timeOperation(void *tid)
 
 	/* Se os processadores estao ocupados, esperar */
 	threadStatus(id);
-	/* procs[id].cpu = sched_getcpu(); */
+	procs[id].cpu = sched_getcpu();
 
 	if (sched == 1) {
 		if (dflag == TRUE)
@@ -72,10 +71,10 @@ void *timeOperation(void *tid)
 	start = clock();
 	while (TRUE) {
 		inactive = threadStatusTime(id);
-		/* procs[id].cpu = sched_getcpu(); */
+		procs[id].cpu = sched_getcpu();
+		
 		end = clock();
 		elapsed = ((double)end - (double)start) / CLOCKS_PER_SEC;
-		
 		elapsed -= inactive;
 		start = end;
 
@@ -95,20 +94,18 @@ void *timeOperation(void *tid)
 					procs[id].tl, procs[id].cpu);
 
 			threadPause(id);
-			procs[id].cp *= 2;
-			procs[id].cq = procs[id].cp * QUANTUM;
+			procs[id].cp = (procs[id].cp + 1) % MAX_QUEUE; /* Caso a prioridade for muito alta, */
+			procs[id].cq = QUANTUM;						   /* temos que reseta-la para 0 */
+			for (i = 0; i < procs[id].cp; i++)
+				procs[id].cq *= 2;
 
 			pthread_mutex_lock(&hmutex);
-			nv = (procs[id].nivel + 1) % MAX_QUEUE;
-			procs[id].nivel = nv;
-			queue[nv][last[nv]++] = id;
-			if (nv == 0) 
-				procs[id].cp = procs[id].cq = 1;
-			if (topq > nv) topq = nv;
-			if (last[topq] <= first[topq])
-				topq = nv;
+			queue[procs[id].cp][last[procs[id].cp]++] = id;
 			pthread_mutex_unlock(&hmutex);
 
+			if (topq > procs[id].cp) topq = procs[id].cp;
+			if (last[topq] <= first[topq]) topq = procs[id].cp;
+			
 			pthread_mutex_lock(&gmutex);
 			tnumb--;
 			ctxch++;
@@ -236,12 +233,14 @@ void shortestRemaining(int n)
 
 void multiplasFilas(int n) 
 {
-	int i = 0, k;
+	int i , j;
 	clock_t end, elapsed;
 	
-	for (k = 0; k < MAX_QUEUE; k++)
-		first[k] = last[k] = 0;
-	topq = 0;
+	i = topq = 0;
+
+	for (j = 0; j < MAX_QUEUE; j++)
+		first[j] = last[j] = 0;
+
 	while (pline < n) {
 		end = clock();
 		elapsed = ((double)end - (double)gstart) / CLOCKS_PER_SEC;
@@ -252,12 +251,12 @@ void multiplasFilas(int n)
 				fprintf(stderr, "Processo da linha [%d] chegou ao sistema.\n", procs[i].tl);	
 			
 			pthread_mutex_lock(&hmutex);
-			queue[0][last[0]++] = i; /* Todos processos comecam na fila 1s */
+			queue[0][last[0]++] = i; 		/* Todos processos comecam na fila de menor quantum */
 			pthread_mutex_unlock(&hmutex);
-			topq = 0;
-			procs[i].cp = 1;    /* Prioridade inicial igual a 1 */
-			procs[i].cq = 1;    /* Quantum inicial igual a QUANTUM segundo(s) */
-			procs[i].nivel = 0; /* Indice inicial da fila */
+
+			topq = 0;				/* Primeira fila nao vazia e a de prioridade 0 */
+			procs[i].cp = 0;    	/* Prioridade inicial igual a 0 */
+			procs[i].cq = QUANTUM;	/* Quantum inicial igual a QUANTUM segundo(s) */
 			threadCreate(i);
 			i++;
 		}
@@ -273,14 +272,11 @@ void multiplasFilas(int n)
 			pthread_mutex_unlock(&gmutex);
 
 			threadResume(queue[topq][first[topq]]);
-			
-			pthread_mutex_lock(&gmutex);
 			first[topq]++;
-			for (k = 0; k < MAX_QUEUE && last[k] <= first[k]; k++);
-			topq = k;
-			if (k == MAX_QUEUE)
-				topq = 0;
-			pthread_mutex_unlock(&gmutex);
+
+			for (j = 0; j < MAX_QUEUE && last[j] <= first[j]; j++); /* Procurando primeira fila nao vazia */
+			topq = j;
+			if (j == MAX_QUEUE) topq = 0;
 		}
 	}	
 }

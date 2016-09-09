@@ -22,7 +22,7 @@ int main()
 	input = NULL;
 
 	/* Inicio do shell */
-    while (42) {
+    while (1) {
     	if (getcwd(path, sizeof(path)) != NULL) {
     		sprintf(prompt, "(%s): ", path);
     		input = readline(prompt);

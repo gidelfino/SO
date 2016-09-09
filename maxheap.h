@@ -8,7 +8,7 @@
 struct maxheap {
 	int size;   /* Tamanho da heap */
 	int *msk; 	/* msk[id] = i me da onde esta o processo id dentro da heap (heap[i] = id) */
-	int *heap;	/* Vetor heap */
+	int *heap;	/* Vetor da heap */
 };
 typedef struct maxheap *MaxHeap;
 

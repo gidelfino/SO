@@ -24,9 +24,8 @@ struct process
     double rt;      /* Tempo restante de execucao */
     double tf;      /* Instante de termino */
 
-    double cp;      /* Prioridade atual do processo */
+    int cp;         /* Prioridade atual do processo */
     double cq;      /* Tempo restante no quantum atual */
-    int nivel;      /* Indice da fila em que o processo esta [0...MAX_QUEUE-1] */
 
     int paused;  /* Flag que indica se a thread esta pausada */
 
@@ -39,16 +38,17 @@ typedef struct process Process;
 
 /* Variaveis globais */
 extern int dflag;   /* Parametro d opcional */
-extern int pline;   /* Linha de impressao do arquivo de saida */
+extern int pline;   /* Numero de linhas (threads) finalizadas */
 extern int sched;   /* Escalonador escolhido */
 extern int pnext;   /* Proximo processo que esta em espera */
 extern int pnumb;   /* Numero de processadores na maquina */
 extern int tnumb;   /* Numero de threads executando no momento */
 extern int ctxch;   /* Numero de mudancas de contexto */
-extern int topq;    /* Indice da fila do topo nao vazia */
-extern int first[MAX_QUEUE];   /* Primeiros membros das filas */
-extern int last[MAX_QUEUE];    /* Ultimos membros das filas */
-extern int queue[MAX_QUEUE][MAX_SIZE]; /* Fila usada para multiplas filas */
+
+extern int topq;                        /* Indice da primeira fila nao vazia */
+extern int first[MAX_QUEUE];            /* Primeiros membros das filas */
+extern int last[MAX_QUEUE];             /* Ultimos membros das filas */
+extern int queue[MAX_QUEUE][MAX_SIZE];  /* Fila usada para multiplas filas */
 
 extern clock_t gstart;          /* Instante de inicio do programa */
 extern pthread_mutex_t gmutex;  /* Mutex global para uso geral */
