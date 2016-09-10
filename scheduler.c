@@ -126,7 +126,8 @@ void *timeOperation(void *tid)
 void firstCome(int n)
 {
 	int i = 0;
-	clock_t end, elapsed;
+	double elapsed;
+	clock_t end;
 
 	pnext = pnumb - 1; /* pnumb processos poderao rodar no inicio */
 
@@ -151,7 +152,8 @@ void shortestRemaining(int n)
 {
 	int i = 0;
 	int topid, botid;
-	clock_t end, elapsed;
+	double elapsed;
+	clock_t end;
 
 	pthread_mutex_lock(&hmutex);
 	ready = minHeapInit(n);
@@ -234,7 +236,8 @@ void shortestRemaining(int n)
 void multiplasFilas(int n) 
 {
 	int i , j;
-	clock_t end, elapsed;
+	double elapsed;
+	clock_t end;
 	
 	i = topq = 0;
 
