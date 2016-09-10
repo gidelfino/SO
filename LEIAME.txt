@@ -2,3 +2,17 @@ Para compilar os dois binários, basta rodar o comando "make" no diretório apro
 
 Para rodar o shell (ep1sh), utilize o comando "./ep1sh".
 Para rodar o escalonador, utilize o comando "./ep1" seguido dos parâmetros corretos.
+
+Resumo de funcionalidade dos arquivos:
+
+scheduler.c/scheduler.h: Contém as funções que executam os escalonamentos.
+
+utility.c  /utility.h  : Contém funções secundárias que auxiliam os escalonamentos,
+                         como por exemplo as funções de leitura e escrita. Além
+                         disso contém as declarações das variáveis globais.
+
+minheap.c  /minheap.h  : Contém as funções para criação e manipulação da estrutura
+maxheap.c  /maxheap.h  : de dados HEAP usada para armazenar os processos em espera
+             			 no escalonador SRTN.
+
+
